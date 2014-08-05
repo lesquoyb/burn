@@ -10,6 +10,7 @@ class Gun(weapon.Weapon):
     scope = 100
     
     def fire(self,angle,sprites,obstacles,shooter):
+
         time = pygame.time.get_ticks()
         difference =  time - self.prev_time
         if self.ammo > 0 and (difference - self.delay > 0)  :

@@ -20,6 +20,7 @@ class Player(character.Character):
         self.weapons += [shotgun.Shotgun(10)]
 
 
+
     def update(self):
         self.isNear = []
         character.Character.update(self)
@@ -46,3 +47,4 @@ class Player(character.Character):
         
     def action(self):
         pass
+

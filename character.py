@@ -18,7 +18,6 @@ class Character(pygame.sprite.Sprite):
     isNear = []
     proximity_circle = pygame.sprite.Sprite()
 
-        
     @abc.abstractmethod
     def update(self,*args):
         # we look if there is collision after moving on the right/left
@@ -54,8 +53,7 @@ class Character(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = position[0]
         self.rect.y = position[1]
-        
-      
+           
 
     def fire(self,destination,sprites):
         dx = destination[0] - self.rect.centerx
@@ -63,6 +61,7 @@ class Character(pygame.sprite.Sprite):
         rads = atan2(-dy,dx)
         rads %= 2*pi
         self.weapons[self.selected_weapon].fire(rads,sprites,self.obstacles,self)
+
     
     
     def next_weapon(self):
@@ -109,7 +108,6 @@ class Character(pygame.sprite.Sprite):
         
     def move_right(self):
         self.move_x += 10
-        
     def changing_weapon(self,event,previous):
         time = pygame.time.get_ticks()
         if time - previous > 80:

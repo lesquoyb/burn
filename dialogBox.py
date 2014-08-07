@@ -6,21 +6,28 @@ class DialogBox(pygame.sprite.Sprite):
     decomp = []
     toRender= ""
     
-    def __init__(self,text,screen):
+    def __init__(self,text,screen,game):
+        pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("images/dialogBox.png").convert()
         self.rect = self.image.get_rect()
         self.screen = screen
         self.decomp = text.split(" ")
-        self.myFont = pygame.font.SysFont("monospace",15)        
+        self.myFont = pygame.font.SysFont("monospace",15)  
+        size = self.myFont.get_linesize()
+        self.nbMax = (self.rect.height-50) // size
         self.nextScreen()
+        self.time = pygame.time.get_ticks()
+        self.game = game
     
         
     def update(self):
         self.rect.bottom = self.screen.get_rect().bottom
         self.rect.centerx = self.screen.get_rect().centerx
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE]:
-            self.nextScreen()        
+        now = pygame.time.get_ticks()
+        if keys[pygame.K_SPACE] and now - self.time > 250:
+            self.nextScreen()   
+            self.time = now
         
     def draw(self):
         self.screen.blit(self.image,self.rect)
@@ -33,10 +40,13 @@ class DialogBox(pygame.sprite.Sprite):
         
     def nextScreen(self):
         if self.pos <= len (self.decomp)-1:
-            self.toRender = self.decomp[self.pos]  +" "  
+            if(self.pos>0):
+                self.toRender = ""                
+            else:
+                self.toRender = self.decomp[self.pos]  +" "        
             temp = self.toRender
-            while (self.pos <= len(self.decomp)):
-                while (self.myFont.size(temp)[0]  < self.rect.width-110):
+            while (self.pos <= len(self.decomp)  and  len(self.toRender.split("\n")) <= self.nbMax-1):
+                while (self.myFont.size(temp)[0]  < self.rect.width-60):
                     self.pos+=1                                    
                     if self.pos >= len(self.decomp)-1:
                         break
@@ -48,6 +58,9 @@ class DialogBox(pygame.sprite.Sprite):
                     temp=self.decomp[self.pos+1]
                 elif self.pos == len(self.decomp)-1:
                     self.toRender += self.decomp[self.pos]
+        else:
+            self.kill()
+            self.game.dialogBoxes.remove(self) 
                 
             
                     

@@ -18,18 +18,18 @@ class DroppableObject(pygame.sprite.Sprite):
         
         
     @abc.abstractmethod
-    def dropped(self,by):
+    def pick_up(self,by):
         pass
     
     def update(self,*args):
         if (pygame.sprite.collide_rect(self,self.player) ):
-            self.dropped(self.player)
+            self.pick_up(self.player)
             self.__delete__()
         else:
             collisions = pygame.sprite.spritecollide(self,self.sprites,False)
             for object in collisions:
                 if  isinstance(object,character.Character):
-                    self.dropped(object)
+                    self.pick_up(object)
                     self.__delete__()
     
     def __delete__(self):

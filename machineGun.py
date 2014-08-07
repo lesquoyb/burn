@@ -1,13 +1,14 @@
 import weapon
-import pygame
 import bullet
+import pygame
 
-class Gun(weapon.Weapon):
+class MachineGun(weapon.Weapon):
     
-    name = "gun"
-    damage = 10
-    delay = 500
-    scope = 100
+    
+    name = "machine gun"
+    damage = 5
+    delay = 50
+    scope = 30
     
     def fire(self,angle,sprites,obstacles,shooter):
 
@@ -16,7 +17,9 @@ class Gun(weapon.Weapon):
         if self.ammo > 0 and (difference - self.delay > 0)  :
             self.prev_time= time
             bullet1 = bullet.Bullet(angle,sprites,obstacles,shooter,self.scope,self.damage)
-            self.ammo -= 1    
+            self.ammo -= 1        
+    
     
     def __init__(self,ammo):
         weapon.Weapon.__init__(self,ammo)
+        

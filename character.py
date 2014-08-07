@@ -22,7 +22,7 @@ class Character(pygame.sprite.Sprite):
     def update(self,*args):
         # we look if there is collision after moving on the right/left
         self.rect.x += self.move_x
-        colliding_objects = pygame.sprite.spritecollide(self,self.obstacles ,False)
+        colliding_objects = pygame.sprite.spritecollide(self,self.game.obstacles ,False)
         for object in colliding_objects:
             if object is not self:
                 #if we collide, we must stick the player to the object
@@ -33,7 +33,7 @@ class Character(pygame.sprite.Sprite):
                 
         # we look if there is collision after moving to the top/bottom
         self.rect.y += self.move_y
-        colliding_objects = pygame.sprite.spritecollide(self,self.obstacles,False)
+        colliding_objects = pygame.sprite.spritecollide(self,self.game.obstacles,False)
         for object in colliding_objects:
             if object is not self:
                 if self.move_y > 0:
@@ -44,8 +44,7 @@ class Character(pygame.sprite.Sprite):
         self.move_y = 0
      
 
-    def __init__(self,image,dead,position,obstacles,screen):
-        self.obstacles = obstacles
+    def __init__(self,image,dead,position,screen,game):
         self.screen = screen
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(image).convert()
@@ -53,6 +52,7 @@ class Character(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = position[0]
         self.rect.y = position[1]
+        self.game = game
            
 
     def fire(self,destination,sprites):
@@ -60,7 +60,7 @@ class Character(pygame.sprite.Sprite):
         dy = destination[1] - self.rect.centery
         rads = atan2(-dy,dx)
         rads %= 2*pi
-        self.weapons[self.selected_weapon].fire(rads,sprites,self.obstacles,self)
+        self.weapons[self.selected_weapon].fire(rads,sprites,self.game.obstacles,self)
 
     
     
@@ -79,7 +79,7 @@ class Character(pygame.sprite.Sprite):
     def die(self):
         self.state="dead"  
         self.image = self.dead
-        self.obstacles.remove(self)
+        self.game.obstacles.remove(self)
         timer = threading.Timer(3.0,self.__delete__)
         timer.start()
     

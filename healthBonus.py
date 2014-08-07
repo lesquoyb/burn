@@ -8,5 +8,5 @@ class HealthBonus(droppableObject.DroppableObject):
         droppableObject.DroppableObject.__init__(self,"images/healthBonus.jpg",position,sprites,player)
         
         
-    def dropped(self,by):
+    def pick_up(self,by):
         by.health += 30

@@ -8,6 +8,7 @@ import healthBonus
 import building
 import map
 import dialogBox
+import rocketLauncherBonus
 
 from pygame.locals import * 
 from sys import exit
@@ -32,11 +33,11 @@ class Game():
         pygame.display.set_caption("Best game ever")
         self.sight = pygame.sprite.Sprite()
         self.sight_group = pygame.sprite.Group()
-        
+        self.dialogBoxes = []
         pygame.mouse.set_visible(False)
-        
+        self.bonuses = []
         #load images and initial positions
-        enemy = cat.Cat((50,50),self.obstacles,self.screen)
+        enemy = cat.Cat((50,50),self.screen,self)
         
         self.obstacles.add(enemy)
         
@@ -56,12 +57,15 @@ class Game():
             self.allSprites.add(wall1)
             self.obstacles.add(wall1)
            
-        self.box = dialogBox.DialogBox("salut et bienvenue dans le monde de burn, ici tu découvriras plein de choses merveilleuses, comme les chat et les chaussettes par exemple. Mais aussi des murs et des maisons!",self.screen)
+        box = dialogBox.DialogBox("Salut et bienvenue dans le monde de burn, ici tu découvriras plein de choses merveilleuses, comme les chat et les chaussettes par exemple.Mais aussi des murs et des maisons! Comme je dois tester cette boite de dialogue il va falloir que j'écrive quelque chose de long, c'est pourquoi je propose d'en profiter pour faire un rapide tutoriel: Commencons par les déplacements: rien de plus simple tu peux utiliser les flêches ou les touches'z','q','s' et 'd' pour bouger(oui c'est bien toi la chaussure au milieu de l'écran). Ensuite je suppose que tu as remarqué cette jolie cible sur l'écran? Il s'agit de ton viseur, tu peux le déplacer grace à ta souris.Ce qui me mène au point suivant: BASTON !!!! Tu disposes de plusieurs armes (3 au moment ou j'ecris ces lignes) utilise les touches 'a' et 'e' pournaviguer entres elles. Tu vois ce truc répugnant sur ta gauche? Oui oui le chat, il est temps pour lui de mourir! vise le et utilise le clickgauche de la souris pour tirer. Voila je pense que c'est assez pour aujourd'hui je te laisse te débrouiller :)."
+                                        ,self.screen,self)
+        self.dialogBoxes += [box]
         self.map1 = map.Map(self.background,(0,0),self.obstacles,self.allSprites)        
-        self.player = player.Player((self.WIDTH/2,50),self.obstacles,self.buildings,self.screen,self)
+        self.player = player.Player((self.WIDTH/2,50),self.screen,self)
         self.obstacles.add(self.player)
         #positionning bonuses
-        bonus = healthBonus.HealthBonus((150,150),self.allSprites,self.player)
+        self.bonuses += [healthBonus.HealthBonus((150,150),self.allSprites,self.player)]
+        self.bonuses += [rocketLauncherBonus.rocketLauncherBonus((250,250),self.allSprites,self.player)]
     
 
     
@@ -112,7 +116,9 @@ class Game():
             #update objects
             #allSprites.update()
             self.map1.update()
-            self.box.update()
+            for box in self.dialogBoxes:
+                box.update()
+            self.player.update()
         
             #moving the map if necessary
             right_dist = self.WIDTH /2 + self.WIDTH/20
@@ -146,7 +152,8 @@ class Game():
             for building in self.buildings:
                 building.draw()	
             self.player.draw()
-            self.box.draw()
+            for box in self.dialogBoxes:
+                box.draw()
             self.sight_group.draw(self.screen)
         
         

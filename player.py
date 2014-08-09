@@ -22,7 +22,7 @@ class Player(character.Character):
 
 
     def update(self):
-        self.isNear = []
+        self.isNear = False
         character.Character.update(self)
         self.proximity_circle.rect.center = self.rect.center
         self.isNear = pygame.sprite.spritecollide(self.proximity_circle,self.game.buildings,False,pygame.sprite.collide_circle)
@@ -43,6 +43,11 @@ class Player(character.Character):
         myfont = pygame.font.SysFont("monospace", 15)	
         openDoor = myfont.render("press space to open",1, (255,255,0) )
         self.screen.blit(openDoor,(self.rect.x -20,self.rect.y+self.rect.height+5))
+        
+        
+    def die(self):
+        character.Character.die(self)
+        self.game.game_over()
         
     def action(self):
         pass

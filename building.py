@@ -6,7 +6,9 @@ class Building(pygame.sprite.Group):
     
     door = pygame.sprite.Sprite()
     house =  pygame.sprite.Sprite()
-    
+    bonuses = []
+    explosions = []
+    buildings = []
     
     def __init__(self,position,screen,name):
         self.screen = screen
@@ -19,7 +21,7 @@ class Building(pygame.sprite.Group):
         background = pygame.image.load("images/background.jpg").convert()
         self.obstacles = pygame.sprite.Group()
         self.allSprites = pygame.sprite.Group(inside)
-        self.inside = map.Map(background,(0,0),self.obstacles,self.allSprites)
+        self.inside = map.Map(background,(0,0),self.obstacles,self.allSprites,self.bonuses,self.explosions,self.buildings)
         self.add(self.door)
         self.add(self.house)        
         self.door.rect = self.door.image.get_rect()

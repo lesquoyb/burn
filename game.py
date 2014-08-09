@@ -22,6 +22,7 @@ class Game():
     explosions = []
     dialogBoxes = []
     bonuses = []
+    messages = []
     
     def __init__(self):
         # init pygame and the game window
@@ -60,7 +61,7 @@ class Game():
         box = dialogBox.DialogBox("Salut et bienvenue dans le monde de burn, ici tu découvriras plein de choses merveilleuses, comme des chats et des chaussettes par exemple.Mais aussi des murs et des maisons! Comme je dois tester cette boite de dialogue il va falloir que j'écrive quelque chose de long, c'est pourquoi je propose d'en profiter pour faire un rapide tutoriel: Commencons par les déplacements: rien de plus simple tu peux utiliser les flêches ou les touches'z','q','s' et 'd' pour bouger(oui c'est bien toi la chaussure au milieu de l'écran). Ensuite je suppose que tu as remarqué cette jolie cible sur l'écran? Il s'agit de ton viseur, tu peux le déplacer grace à ta souris.Ce qui me mène au point suivant: BASTON !!!! Tu disposes de plusieurs armes (3 au moment ou j'ecris ces lignes) utilise les touches 'a' et 'e' pournaviguer entres elles. Tu vois ce truc répugnant sur ta gauche? Oui oui le chat, il est temps pour lui de mourir! vise le et utilise le clickgauche de la souris pour tirer. Voila je pense que c'est assez pour aujourd'hui je te laisse te débrouiller :)."
                                         ,self.screen,self)
         self.dialogBoxes += [box]
-        self.map1 = map.Map(self.background,(0,0),self.obstacles,self.allSprites,self.bonuses,self.bonuses,self.buildings)        
+        self.map1 = map.Map(self.background,(0,0),self.obstacles,self.allSprites,self.bonuses,self.explosions,self.buildings)        
         self.player = player.Player((self.WIDTH/2,50),self.screen,self)
         self.obstacles.add(self.player)
         #positionning bonuses
@@ -113,57 +114,9 @@ class Game():
             if click[0]:#if the left button of the mouse is pressed
                 self.player.fire(pygame.mouse.get_pos(),self.allSprites)	
         
-            #update objects
-            #allSprites.update()
-            self.map1.update()
-            for box in self.dialogBoxes:
-                box.update()
-                
-            for explosion in self.explosions:
-                explosion.update()
-            self.player.update()
+            self.update() 
         
-            #moving the map if necessary
-            right_dist = self.WIDTH /2 + self.WIDTH/20
-            if self.player.rect.right >= right_dist:
-                diff = self.player.rect.right - right_dist
-                self.player.rect.right = right_dist
-                self.map1.scroll_width(-diff)
-            left_dist = self.WIDTH/2 - self.WIDTH/20
-            if self.player.rect.left <= left_dist:
-                diff = left_dist - self.player.rect.left
-                self.player.rect.left = left_dist
-                self.map1.scroll_width(diff)
-        
-            top_dist = self.HEIGHT/2 - self.HEIGHT/20
-            if self.player.rect.top <= top_dist:
-                diff = top_dist - self.player.rect.top
-                self.player.rect.top = top_dist
-                self.map1.scroll_height(diff)
-        
-            bottom_dist = self.HEIGHT/2 + self.HEIGHT/20
-            if self.player.rect.bottom >= bottom_dist:
-                diff = bottom_dist - self.player.rect.bottom
-                self.player.rect.bottom = bottom_dist
-                self.map1.scroll_height(diff)		
-        
-            #print images
-            self.map1.draw(self.screen)
-            #screen.blit(background,(0,0))
-            #allSprites.draw(screen)
-            self.print_player_info()
-            for building in self.buildings:
-                building.draw()	
-            self.player.draw()
-            for box in self.dialogBoxes:
-                box.draw()
-            for explosiont in self.explosions:
-                explosion.draw()
-            self.sight_group.draw(self.screen)
-        
-        
-            pygame.display.flip()
-            self.clock.tick(60)
+            self.draw()
         
         pygame.quit()
         
@@ -174,6 +127,34 @@ class Game():
         self.buildings.clear()
         
         
+        
+    def update(self):
+        #update objects
+        self.map1.update()
+        for box in self.dialogBoxes:
+            box.update()
+        self.player.update()        
+        
+
+
+    def draw(self):
+        #print images
+        self.map1.draw(self.screen,self.player)
+        self.print_player_info()
+        for box in self.dialogBoxes:
+            box.draw() 
+        self.player.draw()            
+        self.sight_group.draw(self.screen)
+        for message in self.messages:
+            self.screen.blit(message,self.screen.get_rect().center)
+        pygame.display.update()
+        #pygame.display.flip()
+        self.clock.tick(100)  
+        
+    def game_over(self):
+        myfont = pygame.font.SysFont("monospace", 50,1)	
+        message = myfont.render("YOU LOSE",1,(255,0,0))        
+        self.messages+=[message]
         
         
         

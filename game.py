@@ -27,15 +27,15 @@ class Game():
     def __init__(self):
         # init pygame and the game window
         pygame.init()	
-        self.screen = pygame.display.set_mode((self.WIDTH,self.HEIGHT))        
-        self.background = pygame.image.load("images/background.jpg").convert()
+        self.screen = pygame.display.set_mode((self.WIDTH,self.HEIGHT), DOUBLEBUF|HWSURFACE)        
+        self.background = pygame.image.load("images/map.png").convert()
         self.clock = pygame.time.Clock()
         self.allSprites = pygame.sprite.Group()
         self.obstacles = pygame.sprite.Group()
         pygame.display.set_caption("Best game ever")
         self.sight = pygame.sprite.Sprite()
         self.sight_group = pygame.sprite.Group()
-        
+        self.clock = pygame.time.Clock()
         pygame.mouse.set_visible(False)
         #load images and initial positions
         enemy = cat.Cat((50,50),self.screen,self)
@@ -61,7 +61,7 @@ class Game():
         box = dialogBox.DialogBox("Salut et bienvenue dans le monde de burn, ici tu découvriras plein de choses merveilleuses, comme des chats et des chaussettes par exemple.Mais aussi des murs et des maisons! Comme je dois tester cette boite de dialogue il va falloir que j'écrive quelque chose de long, c'est pourquoi je propose d'en profiter pour faire un rapide tutoriel: Commencons par les déplacements: rien de plus simple tu peux utiliser les flêches ou les touches'z','q','s' et 'd' pour bouger(oui c'est bien toi la chaussure au milieu de l'écran). Ensuite je suppose que tu as remarqué cette jolie cible sur l'écran? Il s'agit de ton viseur, tu peux le déplacer grace à ta souris.Ce qui me mène au point suivant: BASTON !!!! Tu disposes de plusieurs armes (3 au moment ou j'ecris ces lignes) utilise les touches 'a' et 'e' pournaviguer entres elles. Tu vois ce truc répugnant sur ta gauche? Oui oui le chat, il est temps pour lui de mourir! vise le et utilise le clickgauche de la souris pour tirer. Voila je pense que c'est assez pour aujourd'hui je te laisse te débrouiller :)."
                                         ,self.screen,self)
         self.dialogBoxes += [box]
-        self.map1 = map.Map(self.background,(0,0),self.obstacles,self.allSprites,self.bonuses,self.explosions,self.buildings)        
+        self.map1 = map.Map(self.background,self.background.get_rect().center,self.obstacles,self.allSprites,self.bonuses,self.explosions,self.buildings)        
         self.player = player.Player((self.WIDTH/2,50),self.screen,self)
         self.obstacles.add(self.player)
         #positionning bonuses
@@ -77,7 +77,9 @@ class Game():
         weapon = myfont.render("current weapon: " + self.player.weapons[self.player.selected_weapon].name,1,(255,255,0))
         health = myfont.render("health: " + str(self.player.health),1,(255,255,0))
         armor = myfont.render("armor: " + str(self.player.armor),1,(255,255,0))
-    
+        fps = myfont.render(str(self.clock.get_fps()),1,(255,255,255))
+        
+        self.screen.blit(fps,(self.WIDTH-100,30))
         self.screen.blit(ammo, (0, 0))
         self.screen.blit(weapon,(0,20))
         self.screen.blit(health,(0,self.HEIGHT-20))
@@ -91,22 +93,11 @@ class Game():
         #game loop
         end = False
         pygame.key.set_repeat(10, 35)
-        previous = pygame.time.get_ticks()
         while not end:
-            key = pygame.key.get_pressed()	
-            if key[pygame.K_z] or key[pygame.K_UP]:
-                self.player.move_up()
-            if key[pygame.K_s] or key[pygame.K_DOWN]:
-                self.player.move_down()			
-            if key[pygame.K_q] or key[pygame.K_LEFT]:
-                self.player.move_left()			
-            if key[pygame.K_d]or key[pygame.K_RIGHT]:
-                self.player.move_right()
-        
+            
             for event in pygame.event.get():
                 if event.type == QUIT:
                     end = True
-                previous = self.player.changing_weapon(event,previous)			
                 if event.type == MOUSEMOTION:
                     self.sight.rect.center = (event.pos[0],event.pos[1])
         
@@ -148,7 +139,6 @@ class Game():
         for message in self.messages:
             self.screen.blit(message,self.screen.get_rect().center)
         pygame.display.update()
-        #pygame.display.flip()
         self.clock.tick(100)  
         
     def game_over(self):

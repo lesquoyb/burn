@@ -8,6 +8,7 @@ class RocketLauncher(weapon.Weapon):
         damage = 300
         delay = 5000
         scope = 50
+        firstTime = True
         
         
         
@@ -17,9 +18,15 @@ class RocketLauncher(weapon.Weapon):
                 weapon.Weapon.__init__(self,ammo)
                 
         def fire(self,angle,sprites,obstacles,shooter):
-                time = pygame.time.get_ticks()
-                difference =  time - self.prev_time
-                if self.ammo > 0 and (difference - self.delay > 0)  :
-                        self.prev_time= time
+                if self.firstTime:
+                        self.firstTime = False
+                        self.prev_time = pygame.time.get_ticks()
                         bullet1 = rocket.Rocket(angle,sprites,obstacles,shooter,self.scope,self.damage,self.explosions,self.screen)
-                        self.ammo -= 1                
+                        self.ammo -= 1                                        
+                else:     
+                        time = pygame.time.get_ticks()
+                        difference =  time - self.prev_time
+                        if self.ammo > 0 and (difference - self.delay > 0)  :
+                                self.prev_time = time
+                                bullet1 = rocket.Rocket(angle,sprites,obstacles,shooter,self.scope,self.damage,self.explosions,self.screen)
+                                self.ammo -= 1                

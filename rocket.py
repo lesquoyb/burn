@@ -5,7 +5,7 @@ import explosion
 class Rocket(bullet.Bullet):
     
     explosion_radius = 30
-    explosion_duration = 20
+    explosion_duration = 300
     
     
     def __delete__(self):

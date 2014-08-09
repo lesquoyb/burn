@@ -13,8 +13,8 @@ class Map(pygame.sprite.Sprite):
         self.obstacles = obstacles
         self.sprites = sprites
         self.rect = self.image.get_rect()
-        self.rect.x = starting_point[0]
-        self.rect.y = starting_point[1]
+        
+        (self.rect.x,self.rect.y ) = (-starting_point[0],-starting_point[1])
         self.bonuses = bonuses
         self.explosions = explosions
         self.buildings = buildings
@@ -33,7 +33,7 @@ class Map(pygame.sprite.Sprite):
             
     def draw(self,screen,player):
         self.move_camera(screen,player)
-        screen.blit(self.image,(0,0))
+        screen.blit(self.image,self.rect)
         self.sprites.draw(screen)
         for building in self.buildings:
             building.draw()	
@@ -46,28 +46,42 @@ class Map(pygame.sprite.Sprite):
         rect = screen.get_rect()
         WIDTH = rect.width
         HEIGHT = rect.height
+        
         right_dist = WIDTH /2 + WIDTH/20
         if player.rect.right >= right_dist:
-            diff = player.rect.right - right_dist
-            player.rect.right = right_dist
-            self.scroll_width(-diff)
+            if self.rect.right > WIDTH:
+                diff = player.rect.right - right_dist
+                player.rect.right = right_dist
+                self.scroll_width(-diff)
+            else:
+                self.rect.right=WIDTH
+            
         left_dist = WIDTH/2 - WIDTH/20
         if player.rect.left <= left_dist:
-            diff = left_dist - player.rect.left
-            player.rect.left = left_dist
-            self.scroll_width(diff)
+            if self.rect.left < 0:
+                diff = left_dist - player.rect.left
+                player.rect.left = left_dist
+                self.scroll_width(diff)
+            else:
+                self.rect.left = 0
     
         top_dist = HEIGHT/2 - HEIGHT/20
         if player.rect.top <= top_dist:
-            diff = top_dist - player.rect.top
-            player.rect.top = top_dist
-            self.scroll_height(diff)
+            if self.rect.top < 0:
+                diff = top_dist - player.rect.top
+                player.rect.top = top_dist
+                self.scroll_height(diff)
+            else:
+                self.rect.top = 0
     
         bottom_dist = HEIGHT/2 + HEIGHT/20
         if player.rect.bottom >= bottom_dist:
-            diff = bottom_dist - player.rect.bottom
-            player.rect.bottom = bottom_dist
-            self.scroll_height(diff)        
+            if self.rect.bottom > HEIGHT:
+                diff = bottom_dist - player.rect.bottom
+                player.rect.bottom = bottom_dist
+                self.scroll_height(diff)  
+            else:
+                self.rect.bottom = HEIGHT
         
     def scroll_width(self,distance):
         for obstacle in self.obstacles:
@@ -78,6 +92,7 @@ class Map(pygame.sprite.Sprite):
                 sprite.rect.x += distance
         for explosion in self.explosions:
             explosion.rect.x += distance
+        self.rect.x +=distance
         
     def scroll_height(self,distance):
         for obstacle in self.obstacles:
@@ -87,6 +102,7 @@ class Map(pygame.sprite.Sprite):
             if sprite not in self.obstacles:
                 sprite.rect.y += distance 
         for explosion in self.explosions:
-            explosion.rect.y += distance        
+            explosion.rect.y += distance  
+        self.rect.y += distance
                 
         

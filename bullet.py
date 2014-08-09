@@ -44,6 +44,7 @@ class Bullet(pygame.sprite.Sprite):
                     if isinstance(collision,character.Character):
                         collision.take_hit(self.damage)
                     self.__delete__()   
+                    
             #test collisions on the y axis
             move_y = self.speed* math.sin(self.angle)
             self.rect.y -= move_y
@@ -58,9 +59,12 @@ class Bullet(pygame.sprite.Sprite):
                     if isinstance(collision,character.Character):
                         collision.take_hit(self.damage)
                     self.__delete__()
+                    
             self.movements_made += 1
         else:
             self.__delete__()
     
     def __delete__(self):
         self.kill()
+        
+    

@@ -19,8 +19,9 @@ class Game():
     WIDTH = 1920
     HEIGHT = 1020
     buildings = []
-    
-    
+    explosions = []
+    dialogBoxes = []
+    bonuses = []
     
     def __init__(self):
         # init pygame and the game window
@@ -33,9 +34,8 @@ class Game():
         pygame.display.set_caption("Best game ever")
         self.sight = pygame.sprite.Sprite()
         self.sight_group = pygame.sprite.Group()
-        self.dialogBoxes = []
+        
         pygame.mouse.set_visible(False)
-        self.bonuses = []
         #load images and initial positions
         enemy = cat.Cat((50,50),self.screen,self)
         
@@ -65,7 +65,7 @@ class Game():
         self.obstacles.add(self.player)
         #positionning bonuses
         self.bonuses += [healthBonus.HealthBonus((150,150),self.allSprites,self.player)]
-        self.bonuses += [rocketLauncherBonus.rocketLauncherBonus((250,250),self.allSprites,self.player)]
+        self.bonuses += [rocketLauncherBonus.rocketLauncherBonus((250,250),self.allSprites,self.player,self.explosions,self.screen)]
     
 
     
@@ -118,6 +118,9 @@ class Game():
             self.map1.update()
             for box in self.dialogBoxes:
                 box.update()
+                
+            for explosion in self.explosions:
+                explosion.update()
             self.player.update()
         
             #moving the map if necessary
@@ -154,6 +157,8 @@ class Game():
             self.player.draw()
             for box in self.dialogBoxes:
                 box.draw()
+            for explosiont in self.explosions:
+                explosion.draw()
             self.sight_group.draw(self.screen)
         
         

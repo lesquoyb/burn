@@ -29,17 +29,36 @@ class Bullet(pygame.sprite.Sprite):
     def update(self):
         current_angle = 0        
         if self.movements_made != self.scope:
-            self.rect.x += self.speed* math.cos(self.angle)
-            self.rect.y -= self.speed* math.sin(self.angle)
-            self.movements_made += 1
+            
+            #test collisions on the x axis
+            move_x = self.speed* math.cos(self.angle)
+            self.rect.x -= move_x
             collisions = pygame.sprite.spritecollide(self,self.obstacles,False)
             for collision in collisions:
                 if collision is not self.shooter:
-                    self.rect.x = collision.rect.x
-                    self.rect.y = collision.rect.y
+                    self.rect.x -= move_x
+                    if (self.rect.x < collision.rect.x):
+                        self.rect.right = collision.rect.left
+                    else:
+                        self.rect.left = collision.rect.right
+                    if isinstance(collision,character.Character):
+                        collision.take_hit(self.damage)
+                    self.__delete__()   
+            #test collisions on the y axis
+            move_y = self.speed* math.sin(self.angle)
+            self.rect.y -= move_y
+            collisions = pygame.sprite.spritecollide(self,self.obstacles,False)
+            for collision in collisions:
+                if collision is not self.shooter:
+                    self.rect.y += move_y
+                    if( self.rect.y < collision.rect.y):
+                        self.rect.bottom = collision.rect.top
+                    else:
+                        self.rect.top = collision.rect.bottom
                     if isinstance(collision,character.Character):
                         collision.take_hit(self.damage)
                     self.__delete__()
+            self.movements_made += 1
         else:
             self.__delete__()
     

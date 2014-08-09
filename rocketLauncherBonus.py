@@ -4,10 +4,10 @@ import pygame
 
 class rocketLauncherBonus(droppableObject.DroppableObject):
     
-    def __init__(self,position,sprites,player):
+    def __init__(self,position,sprites,player,explosions,screen):
         droppableObject.DroppableObject.__init__(self,"images/rocketLauncher.jpe",position,sprites,player)
-
-        
+        self.explosions = explosions
+        self.screen = screen
         
     def pick_up(self,by):
         i = 0
@@ -17,5 +17,5 @@ class rocketLauncherBonus(droppableObject.DroppableObject):
                 break
             i+=1      
         else:
-            by.weapons += [rocketLauncher.RocketLauncher(3) ]         
+            by.weapons += [rocketLauncher.RocketLauncher(3,self.explosions,self.screen) ]         
         

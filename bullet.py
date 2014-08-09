@@ -32,7 +32,7 @@ class Bullet(pygame.sprite.Sprite):
             
             #test collisions on the x axis
             move_x = self.speed* math.cos(self.angle)
-            self.rect.x -= move_x
+            self.rect.x += move_x
             collisions = pygame.sprite.spritecollide(self,self.obstacles,False)
             for collision in collisions:
                 if collision is not self.shooter:

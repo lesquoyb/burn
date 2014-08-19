@@ -1,4 +1,5 @@
 import pygame
+import tools
 import cat
 import player
 import math
@@ -36,11 +37,20 @@ class Game():
         self.sight = pygame.sprite.Sprite()
         self.sight_group = pygame.sprite.Group()
         self.clock = pygame.time.Clock()
+        
         pygame.mouse.set_visible(False)
+        
+        self.map1 = map.Map(self.background,self.background.get_rect().center,self.obstacles,self.allSprites,self.bonuses,self.explosions,self.buildings)        
+        
+        
+        
         #load images and initial positions
-        enemy = cat.Cat((50,50),self.screen,self)
+        enemy = cat.Cat((60,50),self.screen,self)
         
         self.obstacles.add(enemy)
+        #wall to test cat's ai
+       # wall5 = wall.Wall((map1,50))
+        #self.obstacles.add(wall5)
         
         self.sight.image = pygame.image.load("images/aim.png").convert()
         self.sight.rect = self.sight.image.get_rect()
@@ -61,7 +71,11 @@ class Game():
         box = dialogBox.DialogBox("Salut et bienvenue dans le monde de burn, ici tu découvriras plein de choses merveilleuses, comme des chats et des chaussettes par exemple.Mais aussi des murs et des maisons! Comme je dois tester cette boite de dialogue il va falloir que j'écrive quelque chose de long, c'est pourquoi je propose d'en profiter pour faire un rapide tutoriel: Commencons par les déplacements: rien de plus simple tu peux utiliser les flêches ou les touches'z','q','s' et 'd' pour bouger(oui c'est bien toi la chaussure au milieu de l'écran). Ensuite je suppose que tu as remarqué cette jolie cible sur l'écran? Il s'agit de ton viseur, tu peux le déplacer grace à ta souris.Ce qui me mène au point suivant: BASTON !!!! Tu disposes de plusieurs armes (3 au moment ou j'ecris ces lignes) utilise les touches 'a' et 'e' pournaviguer entres elles. Tu vois ce truc répugnant sur ta gauche? Oui oui le chat, il est temps pour lui de mourir! vise le et utilise le clickgauche de la souris pour tirer. Voila je pense que c'est assez pour aujourd'hui je te laisse te débrouiller :)."
                                         ,self.screen,self)
         self.dialogBoxes += [box]
-        self.map1 = map.Map(self.background,self.background.get_rect().center,self.obstacles,self.allSprites,self.bonuses,self.explosions,self.buildings)        
+        #test
+        wall5 = wall.Wall((self.map1.rect.width-self.screen.get_rect().width-50,-self.map1.rect.height-self.screen.get_rect().height-50))
+        self.obstacles.add(wall5)
+        self.allSprites.add(wall5)
+        
         self.player = player.Player((self.WIDTH/2,50),self.screen,self)
         self.obstacles.add(self.player)
         #positionning bonuses
@@ -72,12 +86,11 @@ class Game():
     
     def print_player_info(self):
         # render text
-        myfont = pygame.font.SysFont("monospace", 15)	
-        ammo = myfont.render("ammo: "+ str(self.player.weapons[self.player.selected_weapon].ammo), 1, (255,255,0))
-        weapon = myfont.render("current weapon: " + self.player.weapons[self.player.selected_weapon].name,1,(255,255,0))
-        health = myfont.render("health: " + str(self.player.health),1,(255,255,0))
-        armor = myfont.render("armor: " + str(self.player.armor),1,(255,255,0))
-        fps = myfont.render(str(self.clock.get_fps()),1,(255,255,255))
+        ammo = tools.myFont.render("ammo: "+ str(self.player.weapons[self.player.selected_weapon].ammo), 1, (255,255,0))
+        weapon = tools.myFont.render("current weapon: " + self.player.weapons[self.player.selected_weapon].name,1,(255,255,0))
+        health = tools.myFont.render("health: " + str(self.player.health),1,(255,255,0))
+        armor = tools.myFont.render("armor: " + str(self.player.armor),1,(255,255,0))
+        fps = tools.myFont.render(str(self.clock.get_fps()),1,(255,255,255))
         
         self.screen.blit(fps,(self.WIDTH-100,30))
         self.screen.blit(ammo, (0, 0))
@@ -85,22 +98,16 @@ class Game():
         self.screen.blit(health,(0,self.HEIGHT-20))
         self.screen.blit(armor,(self.WIDTH-100,self.HEIGHT-20))
     
-    
-    
-    
-  
     def mainLoop(self):
         #game loop
         end = False
         pygame.key.set_repeat(10, 35)
         while not end:
-            
             for event in pygame.event.get():
                 if event.type == QUIT:
                     end = True
                 if event.type == MOUSEMOTION:
                     self.sight.rect.center = (event.pos[0],event.pos[1])
-        
             click = pygame.mouse.get_pressed()
             if click[0]:#if the left button of the mouse is pressed
                 self.player.fire(pygame.mouse.get_pos(),self.allSprites)	
@@ -142,9 +149,8 @@ class Game():
         self.clock.tick(100)  
         
     def game_over(self):
-        myfont = pygame.font.SysFont("monospace", 50,1)	
-        message = myfont.render("YOU LOSE",1,(255,0,0))        
-        self.messages+=[message]
+        message = tools.myFont.render("YOU LOSE",1,(255,0,0))        
+        self.messages += [message]
         
         
         

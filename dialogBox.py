@@ -1,4 +1,5 @@
 import pygame
+import tools
 
 class DialogBox(pygame.sprite.Sprite):
     
@@ -12,8 +13,7 @@ class DialogBox(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.screen = screen
         self.decomp = text.split(" ")
-        self.myFont = pygame.font.SysFont("monospace",15)  
-        size = self.myFont.get_linesize()
+        size = tools.myFont.get_linesize()
         self.nbMax = (self.rect.height-50) // size
         self.nextScreen()
         self.time = pygame.time.get_ticks()
@@ -34,7 +34,7 @@ class DialogBox(pygame.sprite.Sprite):
         toRender = self.toRender.split("\n")
         i = 0
         for line in toRender:
-            renderedText = self.myFont.render(line,1,(255,255,255))
+            renderedText = tools.myFont.render(line,1,(255,255,255))
             self.screen.blit(renderedText,(self.rect.x+30,self.rect.y +20 +i*20))
             i+=1
         
@@ -46,7 +46,7 @@ class DialogBox(pygame.sprite.Sprite):
                 self.toRender = self.decomp[self.pos]  +" "        
             temp = self.toRender
             while (self.pos <= len(self.decomp)  and  len(self.toRender.split("\n")) <= self.nbMax-1):
-                while (self.myFont.size(temp)[0]  < self.rect.width-60):
+                while (tools.myFont.size(temp)[0]  < self.rect.width-60):
                     self.pos+=1                                    
                     if self.pos >= len(self.decomp)-1:
                         break

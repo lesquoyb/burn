@@ -4,11 +4,11 @@ from math import atan2, degrees, pi
 
 
 class Character(pygame.sprite.Sprite):
-
+    
     INITIAL_LIFE = 100
     state = 'alive'
     armor = 0
-    speed = 10
+    speed = 15
     health = INITIAL_LIFE
     weapons = []
     selected_weapon = 0
@@ -17,9 +17,19 @@ class Character(pygame.sprite.Sprite):
     isNear = []
     proximity_circle = pygame.sprite.Sprite()
 
-    def update(self):
-        
-              
+
+    def __init__(self,image,dead,position,screen,game):
+        self.screen = screen
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(image).convert()
+        self.dead = pygame.image.load(dead).convert()
+        self.rect = self.image.get_rect()
+        self.rect.x = position[0]
+        self.rect.y = position[1]
+        self.game = game
+           
+
+    def update(self):       
         # we look if there is collision after moving on the right/left  
         self.rect.x += self.move_x        
         colliding_objects = pygame.sprite.spritecollide(self,self.game.obstacles ,False)
@@ -33,8 +43,8 @@ class Character(pygame.sprite.Sprite):
         #forbid the player to exit the map
         if self.rect.x < 0:
             self.rect.x = 0
-        elif self.rect.right > self.screen.get_rect().width:
-            self.rect.right = self.screen.get_rect().width
+        elif (-self.game.map1.rect.x)+self.rect.right > self.game.map1.rect.width:
+            self.rect.right = self.game.screen.get_rect().width
                 
         # we look if there is collision after moving to the top/bottom
         self.rect.y += self.move_y        
@@ -48,24 +58,15 @@ class Character(pygame.sprite.Sprite):
         #forbid the character to exit the map
         if self.rect.y < 0:
             self.rect.y = 0  
-        elif self.rect.bottom > self.screen.get_rect().height:
-            self.rect.bottom = self.screen.get_rect().height 
+        elif self.rect.bottom > self.game.map1.rect.height:
+            self.rect.bottom = self.game.map1.rect.height 
             
         #once the movement done, we reinitialize the vector
         self.move_x = 0
         self.move_y = 0
      
 
-    def __init__(self,image,dead,position,screen,game):
-        self.screen = screen
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(image).convert()
-        self.dead = pygame.image.load(dead).convert()
-        self.rect = self.image.get_rect()
-        self.rect.x = position[0]
-        self.rect.y = position[1]
-        self.game = game
-           
+
 
     def fire(self,destination,sprites):
         dx = destination[0] - self.rect.centerx
@@ -102,7 +103,7 @@ class Character(pygame.sprite.Sprite):
             
             
     def printLife(self):
-        myFont = pygame.font.Font("monospace",15)
+        
         self.screen.render(str(self.health)+ " / " + str(self.INITIAL_LIFE),1,(255,0,0))
             
     def __delete__(self):

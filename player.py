@@ -3,6 +3,7 @@ import pygame
 import gun
 import shotgun
 import machineGun
+import tools
 
 
 class Player(character.Character):
@@ -18,24 +19,13 @@ class Player(character.Character):
         self.weapons += [gun.Gun(1000)]
         self.weapons += [shotgun.Shotgun(10)]
         self.weapons += [machineGun.MachineGun(500)]
+        self.speed = 10
 
 
 
     def update(self):
         self.isNear = False
         character.Character.update(self)
-        #forbid the player to exit the map
-        self.rect.x += self.move_x
-        if self.rect.x < 0:
-            self.rect.x = 0
-        elif self.rect.right > self.screen.get_rect().width:
-            self.rect.right = self.screen.get_rect().width
-        if self.rect.y < 0:
-            self.rect.y = 0  
-        elif self.rect.bottom > self.screen.get_rect().height:
-            self.rect.bottom = self.screen.get_rect().height
-        
-        
         self.proximity_circle.rect.center = self.rect.center
         self.isNear = pygame.sprite.spritecollide(self.proximity_circle,self.game.buildings,False,pygame.sprite.collide_circle)
         if (self.isNear):
@@ -56,15 +46,13 @@ class Player(character.Character):
 
     def draw(self):
         self.screen.blit(self.image,self.rect)
-        myfont = pygame.font.SysFont("monospace", 15)	        
         for elm in self.isNear:
             if pygame.sprite.collide_circle(self,elm.door):
                 self.printOpen()    
 
 
     def printOpen(self):
-        myfont = pygame.font.SysFont("monospace", 15)	
-        openDoor = myfont.render("press space to open",1, (255,255,0) )
+        openDoor = tools.myFont.render("press space to open",1, (255,255,0) )
         self.screen.blit(openDoor,(self.rect.x -20,self.rect.y+self.rect.height+5))
         
         

@@ -16,6 +16,7 @@ class Map(pygame.sprite.Sprite):
         self.obstacles = obstacles
         self.sprites = sprites
         self.rect = self.image.get_rect()
+        
         (self.rect.x,self.rect.y ) = (-starting_point[0],-starting_point[1])
         self.bonuses = bonuses
         self.explosions = explosions
@@ -29,6 +30,7 @@ class Map(pygame.sprite.Sprite):
             obstacle.update()
         for sprite in self.sprites:
             sprite.update()
+
         for explosion in self.explosions:
             explosion.update()
             
@@ -41,7 +43,7 @@ class Map(pygame.sprite.Sprite):
             building.draw()	
         for explosion in self.explosions:
             explosion.draw()    
-        #self.print_costs(screen)
+        self.print_costs(screen)
         
         
     def move_camera(self,screen,player):
@@ -57,7 +59,7 @@ class Map(pygame.sprite.Sprite):
                 player.rect.right = right_dist
                 self.scroll_width(-diff)
             else:
-                self.rect.right = WIDTH
+                self.rect.right=WIDTH
             
         left_dist = WIDTH/2 - WIDTH/20
         if player.rect.left <= left_dist:
@@ -95,7 +97,7 @@ class Map(pygame.sprite.Sprite):
                 sprite.rect.x += distance
         for explosion in self.explosions:
             explosion.rect.x += distance
-        self.rect.x += distance
+        self.rect.x +=distance
         
     def scroll_height(self,distance):
         for obstacle in self.obstacles:
@@ -109,76 +111,33 @@ class Map(pygame.sprite.Sprite):
         self.rect.y += distance
         
         
-    #return the node at the location or None
+    #return the node id of the location
     def get_node(self,location):
-        index =   (location[1]//tools.NODE_STEP-1)*(self.rect.width//tools.NODE_STEP -1)+ (location[0]//tools.NODE_STEP)-1 +( -(self.rect.y)//tools.NODE_STEP-1* (self.rect.width//tools.NODE_STEP-1)+ (-(self.rect.x)//tools.NODE_STEP-10))-1
-        return node.Node(location,self.costs[index],index)
+        return self.costs[location[1]*self.rect.width+location[0]]
         
-    def getAdjacentNodes(self, curnode, dest):
-        result = []
-        cl = curnode.location
-        dl = dest
-        n = self._handleNode(cl[0]+tools.NODE_STEP,cl[1],curnode,dl[0],dl[1])
-        if n: 
-            result.append(n)
-        n = self._handleNode(cl[0]-tools.NODE_STEP,cl[1],curnode,dl[0],dl[1])
-        if n: 
-            result.append(n)
-        n = self._handleNode(cl[0],cl[1]+tools.NODE_STEP,curnode,dl[0],dl[1])
-        if n:
-            result.append(n)
-        n = self._handleNode(cl[0],cl[1]-tools.NODE_STEP,curnode,dl[0],dl[1])
-        if n: 
-            result.append(n)
-        return result
-    
-    def _handleNode(self,x,y,fromnode,destx,desty):
-        n = self.get_node((x,y))
-        if n is not None:
-            dx = max(x,destx) - min(x,destx)
-            dy = max(y,desty) - min(y,desty)
-            emCost = dx+dy
-            n.cost += fromnode.cost                                   
-            n.score = n.cost+emCost
-            n.parent=fromnode
-            return n
-        return None    
             
     def initialize_cost(self):
         """ initialize the cost of each node of the map, costs less resources than calculate each time """
-        step = tools.NODE_STEP
+        step = character.Character.MINIMUM_SPEED
         self.costs = [tools.NEUTRAL_COST] * ((self.rect.width//step)*(self.rect.height//step))   
+        size = len(self.costs)#debugging purpose
         for item in self.obstacles:
-            for i in range(item.rect.x,item.rect.x+item.rect.width,step):
-                for j in range(item.rect.y,item.rect.y+item.rect.height,step):
-                    #debugging
-                    screen_position = (-(self.rect.y)//step-1) * (self.rect.width//step-1)\
-                                    + (-(self.rect.x)//step-1)
-                    item_position = (j//step-1)*(self.rect.width//step-1)+(i//step-1)
-                    self.costs[ item_position + screen_position -1 ] = tools.OBSTACLE_COST  
-        for item in self.bonuses:
-            for i in range(item.rect.x,item.rect.x+item.rect.width,step):
-                for j in range(item.rect.y,item.rect.y+item.rect.height,step):
-                    #debugging
-                    screen_position = (-(self.rect.y)//step-1) * (self.rect.width//step-1)\
-                                    + (-(self.rect.x)//step-1)
-                    item_position = (j//step-1)*(self.rect.width//step-1)+(i//step-1)
-                    self.costs[ item_position + screen_position -1]=tools.BONUS_COST              
+            for i in range(item.rect.x,item.rect.x+item.rect.width+1,step):
+                for j in range(item.rect.y,item.rect.y+item.rect.height+1,step):
+                    self.costs[(j//step)*(self.rect.width//step)+(i//step)]=tools.OBSTACLE_COST  
         
     def print_costs(self,screen):
-        """ debugging purpose, framerate drop """
+        """ debugging purpose, big framerate drop """
         step = character.Character.MINIMUM_SPEED
         rect = screen.get_rect()
-        for i in range(0,rect.width,step):
-            for j in range(0,rect.height,step):
-                index = (j//step-1)*(self.rect.width//step-1)+(i//step-1)\
-                    + (-(self.rect.y)//step-1) * (self.rect.width//step-1)\
-                    + (-(self.rect.x)//step-1)
-                if(self.costs[index-1] != 0):
-                    text = tools.myFont.render(str(self.costs[index-1]),1,(255,255,0))
-                    screen.blit(text,(i,j))     
-                    pygame.draw.circle(screen,(255,255,0),(i,j),1,1)
-                    pygame.draw.circle(screen,(255,0,0),(i+step,j+step),1,1)
+        for i in range(0,rect.width+1,step):
+            for j in range(0,rect.height+1,step):
+                index = j*(self.rect.width//step)+i\
+                    + abs((self.rect.y)//step) * (self.rect.width//step)\
+                    + abs((self.rect.x)//step)
+                if( self.costs[index] == -1):
+                    text = tools.myFont.render(str((i,j)),1,(0,0,0))
+                    screen.blit(text,(i,j))                     
 
         
                 

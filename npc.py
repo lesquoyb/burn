@@ -1,4 +1,3 @@
-import pygame
 import character
 
 class Npc(character):
@@ -8,5 +7,4 @@ class Npc(character):
         
 
     def speak(self):
-    
-    
+        pass

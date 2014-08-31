@@ -1,5 +1,4 @@
 import enemy
-import pygame
 
 class Cat(enemy.Enemy):
     

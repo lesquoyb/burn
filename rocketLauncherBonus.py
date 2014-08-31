@@ -1,6 +1,5 @@
 import droppableObject
 import rocketLauncher
-import pygame
 
 class rocketLauncherBonus(droppableObject.DroppableObject):
     

@@ -1,5 +1,4 @@
 import pygame
-import bullet
 import abc
 
 class Weapon(pygame.sprite.Sprite):

@@ -1,4 +1,3 @@
-import pygame
 import droppableObject
 
 class HealthBonus(droppableObject.DroppableObject):

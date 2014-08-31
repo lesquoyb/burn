@@ -27,7 +27,6 @@ class Bullet(pygame.sprite.Sprite):
         
         
     def update(self):
-        current_angle = 0        
         if self.movements_made != self.scope:
             
             #test collisions on the x axis

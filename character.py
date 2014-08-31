@@ -32,14 +32,14 @@ class Character(pygame.sprite.Sprite):
     def update(self):       
         # we look if there is collision after moving on the right/left  
         self.rect.x += self.move_x        
-        colliding_objects = pygame.sprite.spritecollide(self,self.game.obstacles ,False)
-        for object in colliding_objects:
-            if object is not self:
-                #if collision, we must stick the player to the object
+        colliding_objs = pygame.sprite.spritecollide(self,self.game.obstacles ,False)
+        for obj in colliding_objs:
+            if obj is not self:
+                #if collision, we must stick the player to the obj
                 if self.move_x>0:
-                    self.rect.right = object.rect.left
+                    self.rect.right = obj.rect.left
                 elif self.move_x<0:
-                    self.rect.left = object.rect.right
+                    self.rect.left = obj.rect.right
         #forbid the player to exit the map
         if self.rect.x < 0:
             self.rect.x = 0
@@ -48,18 +48,18 @@ class Character(pygame.sprite.Sprite):
                 
         # we look if there is collision after moving to the top/bottom
         self.rect.y += self.move_y        
-        colliding_objects = pygame.sprite.spritecollide(self,self.game.obstacles,False)
-        for object in colliding_objects:
-            if object is not self:
+        colliding_objs = pygame.sprite.spritecollide(self,self.game.obstacles,False)
+        for obj in colliding_objs:
+            if obj is not self:
                 if self.move_y > 0:
-                    self.rect.bottom = object.rect.top
+                    self.rect.bottom = obj.rect.top
                 elif self.move_y < 0 :
-                    self.rect.top = object.rect.bottom
-        #forbid the character to exit the map
+                    self.rect.top = obj.rect.bottom
+        #forbid the character to exit the map  
         if self.rect.y < 0:
             self.rect.y = 0  
-        elif self.rect.bottom > self.game.map1.rect.height:
-            self.rect.bottom = self.game.map1.rect.height 
+        elif (self.rect.bottom-self.game.map1.rect.y) > self.game.map1.rect.height:
+            self.rect.bottom = self.game.screen.get_rect().height 
             
         #once the movement done, we reinitialize the vector
         self.move_x = 0
@@ -103,7 +103,6 @@ class Character(pygame.sprite.Sprite):
             
             
     def printLife(self):
-        
         self.screen.render(str(self.health)+ " / " + str(self.INITIAL_LIFE),1,(255,0,0))
             
     def __delete__(self):

@@ -3,6 +3,7 @@ import pygame
 import aStar
 import node
 import tools
+from IPython.external.path._path import path
 
 class Enemy(character.Character):
     
@@ -64,35 +65,22 @@ class Enemy(character.Character):
     
     def move_to_path_node(self,path):
         """ needs to be improved in order to be able to reach multiple path nodes within the same update 
-        (exemple first step is 15px away and the speed is 20, you should be able to reach the first node 
+        (example first step is 15px away and the speed is 20, you should be able to reach the first node 
         and begin to move to the second one in only one update) """
         if (path is not None):
-            x = self.rect.x
-            y = self.rect.y
-            if (x == path['nodes'][0].location[0] and y == path['nodes'][0].location[1]):
-                path['nodes'].pop(0)#as the first step is reach we can pop it out from the path            
+            index = self.game.map1.get_node((self.rect.x,self.rect.y)).index
+            if index == path['nodes'][0].index:
+                path['nodes'].pop(0)#as the first step is reach we can pop it out from the path  
+            nb_of_nodes_per_line = self.game.map1.rect.width//tools.NODE_STEP  -1        
             for node in path['nodes']:
-                if x == node.location[0]:
-                    if y < node.location[1]:
-                        self.move_down()
-                    else:
-                        self.move_up()
-                elif y == node.location[1]:
-                    if x < node.location[0]:
-                        self.move_right()
-                    else:
-                        self.move_left()
-                else:
-                    # the enemy and the first node aren't on the same axis at all we move in order to reach the closer one
-                    dx = x - node.location[0]
-                    dy = y - node.location[1]
-                    if abs(dx) < abs(dy):
-                        if dx < 0 :
-                            self.move_right()
-                        else:
-                            self.move_left()
-                    else:
-                        if dy < 0:
-                            self.move_down()
-                        else:
-                            self.move_up()
+                nodeIndex = node.index
+                if (index +1) == nodeIndex:
+                    self.move_right()
+                elif (index-1) == nodeIndex:
+                    self.move_left()
+                elif (index - nb_of_nodes_per_line) == nodeIndex:
+                    self.move_up()
+                elif (index + nb_of_nodes_per_line) == nodeIndex:
+                    self.move_down()
+                    
+                    

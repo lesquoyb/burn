@@ -27,9 +27,9 @@ class DroppableObject(pygame.sprite.Sprite):
             self.__delete__()
         else:
             collisions = pygame.sprite.spritecollide(self,self.sprites,False)
-            for object in collisions:
-                if  isinstance(object,character.Character):
-                    self.pick_up(object)
+            for obj in collisions:
+                if  isinstance(obj,character.Character):
+                    self.pick_up(obj)
                     self.__delete__()
     
     def __delete__(self):

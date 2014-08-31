@@ -1,7 +1,6 @@
 import pygame
 import player
 import node
-import character
 import tools
 
 class Map(pygame.sprite.Sprite):
@@ -20,7 +19,6 @@ class Map(pygame.sprite.Sprite):
         self.bonuses = bonuses
         self.explosions = explosions
         self.buildings = buildings
-        self.initialize_cost()
         
         
         
@@ -111,7 +109,10 @@ class Map(pygame.sprite.Sprite):
         
     #return the node at the location or None
     def get_node(self,location):
-        index =   (location[1]//tools.NODE_STEP-1)*(self.rect.width//tools.NODE_STEP -1)+ (location[0]//tools.NODE_STEP)-1 +( -(self.rect.y)//tools.NODE_STEP-1* (self.rect.width//tools.NODE_STEP-1)+ (-(self.rect.x)//tools.NODE_STEP-10))-1
+        #index =   (location[1]//tools.NODE_STEP-1)*(self.rect.width//tools.NODE_STEP -1)+ (location[0]//tools.NODE_STEP)-1 +( -(self.rect.y)//tools.NODE_STEP-1* (self.rect.width//tools.NODE_STEP-1)+ (-(self.rect.x)//tools.NODE_STEP-10))-1
+        step = tools.NODE_STEP
+        index = (-(self.rect.y)//step-1) * (self.rect.width//step-1)\
+                                    + (-(self.rect.x)//step-1) + (location[1]//step-1)*(self.rect.width//step-1)+(location[0]//step-1) - 1
         return node.Node(location,self.costs[index],index)
         
     def getAdjacentNodes(self, curnode, dest):
@@ -135,11 +136,8 @@ class Map(pygame.sprite.Sprite):
     def _handleNode(self,x,y,fromnode,destx,desty):
         n = self.get_node((x,y))
         if n is not None:
-            dx = max(x,destx) - min(x,destx)
-            dy = max(y,desty) - min(y,desty)
-            emCost = dx+dy
             n.cost += fromnode.cost                                   
-            n.score = n.cost+emCost
+            n.score = n.cost#+emCost
             n.parent=fromnode
             return n
         return None    
@@ -167,18 +165,17 @@ class Map(pygame.sprite.Sprite):
         
     def print_costs(self,screen):
         """ debugging purpose, framerate drop """
-        step = character.Character.MINIMUM_SPEED
+        step = tools.NODE_STEP  
         rect = screen.get_rect()
         for i in range(0,rect.width,step):
             for j in range(0,rect.height,step):
-                index = (j//step-1)*(self.rect.width//step-1)+(i//step-1)\
-                    + (-(self.rect.y)//step-1) * (self.rect.width//step-1)\
-                    + (-(self.rect.x)//step-1)
-                if(self.costs[index-1] != 0):
-                    text = tools.myFont.render(str(self.costs[index-1]),1,(255,255,0))
-                    screen.blit(text,(i,j))     
-                    pygame.draw.circle(screen,(255,255,0),(i,j),1,1)
-                    pygame.draw.circle(screen,(255,0,0),(i+step,j+step),1,1)
+                index = ((j+abs(rect.y))//step)*(self.rect.width//step)\
+                    + ((i+abs(rect.x))//step) 
+                #index = (j//step-1)*(rect.width//step-1)+(i//step-1)\
+                #+ abs((self.rect.y)//step-1) * (self.rect.width//step-1)\
+                #+ abs((self.rect.x)//step-1)
+                text = tools.myFont.render(str(self.costs[index-1]),1,(0,0,0))
+                screen.blit(text,(i,j)) 
 
         
                 

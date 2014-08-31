@@ -1,10 +1,9 @@
+#-*- encoding utf-8 -*-
 import pygame
 import tools
 import cat
 import player
-import math
 import wall
-import bullet
 import healthBonus
 import building
 import map
@@ -18,7 +17,7 @@ from sys import exit
 class Game():
     
     WIDTH = 1920
-    HEIGHT = 1020
+    HEIGHT = 1020   
     buildings = []
     explosions = []
     dialogBoxes = []
@@ -28,7 +27,7 @@ class Game():
     def __init__(self):
         # init pygame and the game window
         pygame.init()	
-        self.screen = pygame.display.set_mode((self.WIDTH,self.HEIGHT), DOUBLEBUF|HWSURFACE)        
+        self.screen = pygame.display.set_mode((self.WIDTH,self.HEIGHT))        
         self.background = pygame.image.load("images/map.png").convert()
         self.clock = pygame.time.Clock()
         self.allSprites = pygame.sprite.Group()
@@ -49,7 +48,7 @@ class Game():
         
         self.obstacles.add(enemy)
         #wall to test cat's ai
-       # wall5 = wall.Wall((map1,50))
+        # wall5 = wall.Wall((map1,50))
         #self.obstacles.add(wall5)
         
         self.sight.image = pygame.image.load("images/aim.png").convert()
@@ -57,7 +56,7 @@ class Game():
         self.sight_group.add(self.sight)
         self.allSprites.add(enemy)
         
-        house = building.Building((-500,-50),self.screen,"firstHouse")
+        house = building.Building((-550,-50),self.screen,"firstHouse")
         self.obstacles.add(house)
         self.buildings += [house]         
         #building walls  
@@ -102,6 +101,7 @@ class Game():
         #game loop
         end = False
         pygame.key.set_repeat(10, 35)
+        self.map1.initialize_cost()
         while not end:
             for event in pygame.event.get():
                 if event.type == QUIT:
